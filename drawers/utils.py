@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 import os
 import sys
 sys.path.append("../")
@@ -23,4 +24,19 @@ def draw_ellipse(frame,bbox,color,track_id=None):
             track_id-=10
         cv2.putText(frame,str(track_id),(x1_text,y1_rect+15),cv2.FONT_HERSHEY_SIMPLEX,0.6,(0,0,0),2)
     return frame
-    
+
+def draw_triangle(frame,bbox,color):
+    y = int(bbox[1])
+    x,_ = get_center_of_bbox(bbox)
+
+    triangle_points = np.array([
+    [x, y],
+    [x - 10, y - 20],
+    [x + 10, y - 20]
+], dtype=np.int32).reshape((-1, 1, 2))
+
+
+    cv2.drawContours(frame,[triangle_points],0,color,cv2.FILLED)
+    cv2.drawContours(frame,[triangle_points],0,(0,0,0),2)
+
+    return frame

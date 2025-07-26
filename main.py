@@ -1,6 +1,6 @@
 from utils import read_video,save_video
 from trackers import PlayerTracker,BallTracker
-from drawers import PlayerTracksDrawer
+from drawers import PlayerTracksDrawer,BallTracksDrawer
 def main():
     #Read video
     video_frames = read_video("input_videos/video_1.mp4")
@@ -13,13 +13,24 @@ def main():
     player_tracks = player_tracker.get_object_tracks(video_frames,read_from_stub=True,stub_path="stubs/player_tracks_stub.pkl")
     ball_tracks = ball_tracker.get_object_tracks(video_frames,read_from_stub=True,stub_path="stubs/ball_tracks_stub.pkl")
 
-    #Drawing ellipses
+    #Remove Wrong ball Detections 
+    ball_tracks = ball_tracker.remove_wrong_detections(ball_tracks)
+
+    #Initialize drawers
     player_drawer = PlayerTracksDrawer()
+    ball_drawer = BallTracksDrawer()
+
+    #draw things 
     output_video_frames = player_drawer.draw(video_frames,player_tracks)
+    output_video_frames = ball_drawer.draw(output_video_frames,ball_tracks)
     #print(player_tracks)
+
 
     #save video
     save_video(output_video_frames,"outputs/output_video.avi")
+
+    #command line printing of saving
+    print("Video Saved")
 
 if __name__ == "__main__":
     main()

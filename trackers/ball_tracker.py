@@ -1,6 +1,7 @@
 from ultralytics import YOLO
 import supervision as sv
 import sys
+import numpy as np
 import os
 sys.path.append("../")
 from utils import read_stub,save_stub
@@ -32,6 +33,9 @@ class BallTracker:
             cls_names = detection.names
             cls_names_inv = {v:k for k,v in cls_names.items()}
             detection_supervision = sv.Detections.from_ultralytics(detection)
+            ball_cls_id = cls_names_inv.get("Ball", None)
+            if ball_cls_id is None:
+                continue
             tracks.append({}) #this is to capture features of ball
             #in a frame if two bbox are considered as ball then the one with high confidence is ball
             chosen_bbox=None
@@ -42,6 +46,10 @@ class BallTracker:
                 cls_id = frame_detection[3]
                 confidence = frame_detection[2]
 
+                # Only consider 'ball' detections
+                if cls_id != ball_cls_id:
+                    continue
+
                 if max_conf<confidence:
                     chosen_bbox = bbox
                     max_conf = confidence
@@ -51,3 +59,28 @@ class BallTracker:
 
         save_stub(stub_path,tracks)
         return tracks
+    
+
+    def remove_wrong_detections(self,ball_positions):
+        maximum_allowed_distance = 25
+        last_good_frame_index = -1
+
+        for i in range(len(ball_positions)):
+            current_bbox = ball_positions[i].get(1,{}).get('bbox',[])
+
+            if len(current_bbox)==0:
+                continue
+            if last_good_frame_index==-1:
+                last_good_frame_index=i
+                continue
+
+            last_good_box = ball_positions[last_good_frame_index].get(1,{}).get('bbox',[])
+            frame_gap = i - last_good_frame_index
+            adjusted_max_distance = maximum_allowed_distance * frame_gap
+
+            if np.linalg.norm(np.array(last_good_box[:2])-np.array(current_bbox[:2]))>adjusted_max_distance:
+                ball_positions[i] = {}
+
+            else:
+                last_good_frame_index = i
+        return ball_positions
