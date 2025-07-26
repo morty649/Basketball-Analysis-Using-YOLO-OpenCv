@@ -1,2 +1,7 @@
 ultralytics
 opencv-python
+pandas 
+numpy
+supervision
+transformers #for team assignment using hugging face - zero shot classifier model - CLIPProcessor - fashion-clip
+
