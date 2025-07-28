@@ -9,7 +9,7 @@ from transformers import CLIPProcessor, CLIPModel
 class TeamAssigner:
     def __init__(self,
                  team1_class_name = "white shirt",
-                 team2_class_name = "dark blue shirt"):
+                 team2_class_name = "dark red shirt"):
         self.team1_class_name = team1_class_name
         self.team2_class_name = team2_class_name
 
