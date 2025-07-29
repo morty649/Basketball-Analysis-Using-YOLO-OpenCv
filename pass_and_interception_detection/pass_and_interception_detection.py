@@ -40,7 +40,7 @@ class PassAndInterceptionDetection:
                 prev_team = player_assignment[prev_frame].get(prev_holder,-1)
                 current_team = player_assignment[frame].get(current_holder,-1)
 
-                if prev_team==current_team and prev_team!=-1 and current_team!=-1:
+                if prev_team!=current_team and prev_team!=-1 and current_team!=-1:
                     interceptions[frame] = current_team
         
         return interceptions

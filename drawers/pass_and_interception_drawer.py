@@ -9,15 +9,15 @@ class PassInterceptionDrawer:
         team_1_interceptions = []
         team_2_interceptions = []
 
-        for frame_num in range(len(passes)):
-            if passes[frame_num]==1:
+        for frame_num,(pass_frame,interception_frame) in enumerate(zip(passes,interceptions)):
+            if pass_frame==1:
                 team_1_passes.append(frame_num)
-            elif passes[frame_num]==2:
+            elif pass_frame==2:
                 team_2_passes.append(frame_num)
 
-            if interceptions[frame_num]==1:
+            if interception_frame==1:
                 team_1_interceptions.append(frame_num)
-            elif interceptions[frame_num]==2:
+            elif interception_frame==2:
                 team_2_interceptions.append(frame_num)
 
         return len(team_1_passes),len(team_2_passes),len(team_1_interceptions),len(team_2_interceptions)
@@ -58,7 +58,7 @@ class PassInterceptionDrawer:
         passes_till_frame = passes[:frame_num+1]
         interceptions_till_frame = interceptions[:frame_num+1]
 
-        team_1_passes,team_2_passes,team_1_interceptions,team_2_interceptions = self.get_stats(passes,interceptions)
+        team_1_passes,team_2_passes,team_1_interceptions,team_2_interceptions = self.get_stats(passes_till_frame,interceptions_till_frame)
 
         cv2.putText(frame,f"Team 1 - Passes : {team_1_passes} Interceptions : {team_1_interceptions}",(text_x,text_y1),cv2.FONT_HERSHEY_SIMPLEX,font_scale,(0,0,0),font_thickness)
         cv2.putText(frame,f"Team 2 - Passes : {team_2_passes} Interceptions : {team_2_interceptions}",(text_x,text_y2),cv2.FONT_HERSHEY_SIMPLEX,font_scale,(0,0,0),font_thickness)
